@@ -653,10 +653,16 @@
           <div class="price-option selected" id="price-anual" onclick="selectPeriodo('anual')">
             <span class="price-badge">ECONOMIZE 17%</span>
             <span class="radio"></span>
-            <span class="plabel">Anual<span style="display:block;font-weight:400;font-size:11.5px;color:var(--gray-600);margin-top:2px;">Cobrança única, sem parcelamento</span></span>
+            <span class="plabel">Anual<span style="display:block;font-weight:400;font-size:11.5px;color:var(--gray-600);margin-top:2px;">Cobrança única, sem parcelamento <span style="background:var(--purple-600);color:#fff;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.02em;">Novo</span></span></span>
             <span class="pval">R$4999<span style="font-weight:400;font-size:12px;">/ano</span></span>
           </div>
         </div>
+        <!-- Copy nova, pedida pelo Giovanni em 25/09: não existe hoje em produção, entra no
+             desenvolvimento junto com o resto deste fluxo. -->
+        <details class="product-note" style="max-width:100%;margin-bottom:14px;">
+          <summary>📌 Nota de produto — texto novo na opção anual</summary>
+          <div class="pn-body">A linha <b>"Cobrança única, sem parcelamento"</b> na opção Anual <b>não existe hoje em produção</b> — é novidade deste protótipo e precisa ser implementada. <b>Motivo:</b> ao ver R$4999 o profissional supõe parcelamento em 12x e descobre a cobrança cheia só na fatura. <b>Por que "cobrança única" e não "à vista":</b> "à vista" costuma ser lido como desconto à vista, dando a entender que existe uma alternativa parcelada — o que não é o caso. Não há aviso equivalente no plano mensal de propósito: lá ninguém espera parcelar.</div>
+        </details>
         <span id="assinar-premium-wrap" style="display:block;" title="">
           <button class="btn btn-primary" id="btn-assinar-premium" style="width:100%;" onclick="assinarPremium()">Assinar Plano Premium</button>
         </span>
