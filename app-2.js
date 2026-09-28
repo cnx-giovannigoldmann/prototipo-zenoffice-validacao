@@ -142,7 +142,7 @@ function confirmCnpjBankInvalidateModal(){
   el('b_banco').value = ''; el('b_ag').value = ''; el('b_conta').value = ''; el('b_dig').value = '';
   el('no-pix-check').checked = false;
   el('bank-fields-box').style.display = 'none';
-  el('bank-result').innerHTML = '<div class="msg pending">O CNPJ foi alterado. Preencha e valide os dados bancários novamente.</div>';
+  el('bank-result').innerHTML = '<div class="msg locked">O CNPJ foi alterado. Preencha e valide os dados bancários novamente para garantir o recebimento sem atrasos.</div>';
   el('bank-attempts-line').style.display = 'none';
   lockBankSection(true);
   renderDots();
@@ -556,7 +556,15 @@ function renderAgendaBanners(){
   } else if(state.cnpj.approved && state.bank.locked){
     wrap.innerHTML += '<div class="banner locked" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏰</span><span>Você atingiu o limite de tentativas de validação dos dados bancários. Tente novamente em <b id="agenda-bank-lock-countdown">'+formatHMS(state.bank.lockSeconds)+'</b>.</span><span class="arrow">›</span></div>';
   } else if(state.cnpj.approved && !state.bank.approved){
-    wrap.innerHTML += '<div class="banner pending" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏳</span><span>Estamos validando seus dados bancários.</span><span class="arrow">›</span></div>';
+    // Dois casos bem diferentes. Quem trocou o CNPJ ficou SEM dado bancário válido e corre risco
+    // real de não receber (decisão de 28/09: fica pendente em tela e é tratado manualmente como
+    // exceção) — aviso forte, em vermelho. Quem ainda está no cadastro inicial só precisa saber que
+    // falta preencher. Nos dois casos a bola está com o profissional, então o texto antigo
+    // ("Estamos validando seus dados bancários") saiu: dava a entender que o sistema estava
+    // trabalhando e que era só esperar.
+    wrap.innerHTML += state.bank.pendingCnpjChange
+      ? '<div class="banner error" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⚠️</span><span><b>Cadastre seus novos dados bancários.</b> Você alterou o CNPJ, e os dados bancários anteriores deixaram de valer. Enquanto não preencher e validar, seu pagamento não será feito.</span><span class="arrow">›</span></div>'
+      : '<div class="banner pending" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏳</span><span>Falta cadastrar seus dados bancários para receber pelos atendimentos.</span><span class="arrow">›</span></div>';
   }
 
   if(financeiroCompleto()){
