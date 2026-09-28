@@ -353,7 +353,8 @@ function switchToPix(){
 function validateBank(){
   if(state.bank.approved || state.window.blocked || state.bank.locked) return;
   // Esse dado bancário está sendo revalidado por causa de uma troca de CNPJ recente — avisa
-  // ANTES de validar que o novo dado só vale a partir do próximo dia 11 (ver nota acima).
+  // ANTES de validar que o novo dado só passa a valer no dia 25, junto com o novo CNPJ
+  // (ver a nota de produto na seção de Dados Bancários do index.html).
   if(state.bank.pendingCnpjChange){
     el('bank-cnpj-transition-modal').classList.add('open');
     return;
