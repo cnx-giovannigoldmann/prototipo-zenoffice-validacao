@@ -419,7 +419,7 @@
                   <input type="checkbox" id="window-lock-check" style="width:auto;" onchange="toggleWindowLock()"> Simular: hoje está dentro da janela de bloqueio (24 a 10)
                 </label>
                 <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;margin-top:10px;">
-                  <input type="checkbox" id="cycle-turnover-check" style="width:auto;" onchange="toggleCycleTurnover()"> Simular: virada de ciclo já concluída (dia 25 já passou)
+                  <input type="checkbox" id="cycle-turnover-check" style="width:auto;" onchange="toggleCycleTurnover()"> Simular: último pagamento nos dados antigos já caiu (dia 10)
                 </label>
               </div>
             </details>
@@ -513,14 +513,17 @@
 
             <!-- Banner PERSISTENTE, só sobre dado bancário (nunca mistura com o assunto do CNPJ) —
                  mesma decisão de 24/09 do banner de CNPJ acima: não usar "msg success" verde pra
-                 informação importante, porque o profissional não lê. -->
+                 informação importante, porque o profissional não lê. Os dois banners ficam separados
+                 de propósito (decisão do Giovanni, 28/09): se o profissional trocar o CNPJ e nunca
+                 cadastrar a conta nova, só faz sentido mostrar o de CNPJ — um banner único ficaria
+                 com metade vazia. -->
             <div class="msg locked" id="bank-transition-banner" style="display:none;margin-bottom:14px;"></div>
 
             <!-- Regra simplificada em 28/09, depois do Giovanni confirmar com o financeiro como o
                  Protheus guarda o dado bancário. Antes desta data a regra dizia "dia 11". -->
             <details class="product-note" style="max-width:520px;">
               <summary>📌 Nota de produto — por que o dado bancário também vira no dia 25</summary>
-              <div class="pn-body">No Protheus o dado bancário fica <b>vinculado ao CNPJ</b>, não ao profissional. Ao trocar o CNPJ é criado um registro novo, e a conta nova entra nesse registro; o registro do CNPJ antigo continua intacto, com a conta antiga. Como a cobrança até o dia 24 sai no CNPJ antigo, ela encontra a conta antiga naturalmente. Por isso <b>não é preciso segurar o envio do dado bancário</b> — ele pode ir pro Fluig junto com o CNPJ, já no momento da validação. A única coisa que espera é a troca de qual CNPJ está ativo, no dia 25, e o dado bancário vira junto com ele. <b>Isso substitui a regra antiga de "dado bancário só no dia 11"</b>, que partia da suposição errada de que a conta nova sobrescreveria a anterior. Contexto: o time financeiro puxa o relatório de pagamento no dia 24 de todo mês, então tudo que muda do dia 25 em diante só entra na leitura do mês seguinte.</div>
+              <div class="pn-body">No Protheus o dado bancário fica <b>vinculado ao CNPJ</b>, não ao profissional. Ao trocar o CNPJ é criado um registro novo, e a conta nova entra nesse registro; o registro do CNPJ antigo continua intacto, com a conta antiga. Como a cobrança até o dia 24 sai no CNPJ antigo, ela encontra a conta antiga naturalmente. Por isso <b>não é preciso segurar o envio do dado bancário</b> — ele pode ir pro Fluig junto com o CNPJ, já no momento da validação. A única coisa que espera é a troca de qual CNPJ está ativo, no dia 25, e o dado bancário vira junto com ele. <b>Isso substitui a regra antiga de "dado bancário só no dia 11"</b>, que partia da suposição errada de que a conta nova sobrescreveria a anterior. Contexto: o time financeiro puxa o relatório de pagamento no dia 24 de todo mês, então tudo que muda do dia 25 em diante só entra na leitura do mês seguinte, e o pagamento cai até o dia 10.<br><br><b>Por que os avisos de "não encerre" sobrevivem ao dia 25:</b> entre o dia 25 e o pagamento (dia 10) a tela já mostra o CNPJ e a conta novos, mas ainda existe um pagamento a caminho nos dados antigos. É a janela em que o profissional pode dar baixa no CNPJ velho achando que já migrou tudo. Se ele fizer isso, trava em dois pontos: a legislação não autoriza emitir nota em nome de CNPJ baixado (nem para serviços prestados antes da baixa), e o banco bloqueia a conta PJ quando o CNPJ é cancelado — a Circular BCB 3.804/16 ainda impede o banco de encerrar conta com irregularidade cadastral, então a conta fica travada. Não é recomendação: é perda de pagamento sem conserto. Por isso os banners de transição só somem quando o último pagamento cai, não no dia 25.</div>
             </details>
 
             <div id="bank-content" class="disabled-block">
@@ -742,7 +745,8 @@
       <button class="modal-close" onclick="closeBankCnpjTransitionModal()" title="Voltar">×</button>
     </div>
     <p>Você está validando dados bancários novos por causa da troca de CNPJ.</p>
-    <p><b>Importante:</b> os novos dados bancários passam a valer a partir do <b>dia 25 deste mês</b>, junto com o novo CNPJ. Até lá, o pagamento continua sendo feito na conta vinculada ao seu CNPJ anterior.</p>
+    <p><b>Importante:</b> os novos dados bancários passam a valer a partir do <b>dia 25 deste mês</b>, junto com o novo CNPJ.</p>
+    <p>O pagamento dos atendimentos feitos até o dia 24 ainda cai na conta anterior, até o <b>dia 10 do mês seguinte</b>. <b>Não feche essa conta nem encerre o CNPJ anterior antes de receber.</b></p>
     <p>Deseja continuar?</p>
     <div class="actions">
       <button class="btn btn-secondary" onclick="closeBankCnpjTransitionModal()">Voltar</button>
@@ -773,7 +777,9 @@
       <button class="modal-close" onclick="closeCnpjBankInvalidateModal()" title="Voltar">×</button>
     </div>
     <p>Ao mudar o CNPJ, você precisará validar novamente seus dados bancários.</p>
-    <p><b>Importante:</b> o novo CNPJ e os novos dados bancários passam a valer juntos, para pagamento de sessões realizadas a partir do <b>dia 25 deste mês</b>. Até lá, mantenha o CNPJ anterior ativo, porque os atendimentos já realizados neste ciclo continuam sendo pagos nele.</p>
+    <p><b>Importante:</b> o novo CNPJ e os novos dados bancários passam a valer juntos, para os atendimentos realizados a partir do <b>dia 25 deste mês</b>.</p>
+    <p>Os atendimentos que você já fez neste ciclo continuam sendo faturados e pagos no CNPJ e na conta anteriores. Esse pagamento cai até o <b>dia 10 do mês seguinte</b>.</p>
+    <p><b>Não encerre o CNPJ anterior e não feche a conta bancária antes de receber esse último pagamento.</b> A nota fiscal precisa ser emitida no CNPJ anterior, e um CNPJ baixado não emite nota.</p>
     <p>Deseja continuar?</p>
     <div class="actions">
       <button class="btn btn-secondary" onclick="closeCnpjBankInvalidateModal()">Voltar</button>
