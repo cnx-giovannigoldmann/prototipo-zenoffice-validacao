@@ -483,8 +483,11 @@ function toggleWindowLock(){
   renderFinanceiroLock();
 }
 
-// Painel de teste: simula a passagem do dia 25 (CNPJ) / dia 11 do mês seguinte (dado bancário), já
-// que o protótipo não roda com data real. Limpa os 2 banners de transição de uma vez.
+// Painel de teste: simula a passagem do dia 25 — data em que o CNPJ novo E o dado bancário novo
+// passam a valer, juntos (ver nota de produto na seção de Dados Bancários). Antes de 28/09 o dado
+// bancário tinha data própria, dia 11; deixou de ter quando se confirmou que ele fica vinculado ao
+// CNPJ no Protheus. Como o protótipo não roda com data real, isso aqui é manual.
+// Limpa os 2 banners de transição de uma vez.
 function toggleCycleTurnover(){
   const done = el('cycle-turnover-check').checked;
   if(done){
@@ -514,7 +517,7 @@ function renderBankTransitionBanner(){
   box.innerHTML = '<b style="display:block;margin-bottom:6px;">⚠️ Dados bancários em transição</b>'
     + 'Dados bancários ativos para pagamento agora: <b>'+(state.bank.officialSummary || '—')+'</b><br>'
     + 'Novos dados validados: <b>'+(state.bank.pendingSummary || '—')+'</b><br>'
-    + 'Os dados bancários serão atualizados somente no próximo <b>dia 11</b>, pois o pagamento será feito na conta vinculada ao CNPJ antigo.';
+    + 'Passam a valer a partir do <b>dia 25 deste mês</b>, junto com o novo CNPJ. Até lá, o pagamento continua sendo feito na conta anterior.';
 }
 function applyWindowLockToBank(){
   if(state.window.blocked){
