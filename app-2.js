@@ -551,7 +551,10 @@ function renderAgendaBanners(){
   if(state.cnpj.locked){
     wrap.innerHTML += '<div class="banner locked" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏰</span><span>Você atingiu o limite de tentativas de validação do CNPJ. Tente novamente em <b id="agenda-lock-countdown">'+formatHMS(state.cnpj.lockSeconds)+'</b>.</span><span class="arrow">›</span></div>';
   } else if(!state.cnpj.approved && state.cnpj.attempts===0){
-    wrap.innerHTML += '<div class="banner pending" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏳</span><span>Estamos validando o CNPJ informado.</span><span class="arrow">›</span></div>';
+    // Mesma correção de 28/09 aplicada no bloco de dados bancários abaixo: aqui nada está sendo
+    // validado, a bola está com o profissional, que ainda nem informou o CNPJ. O texto antigo
+    // ("Estamos validando o CNPJ informado") sugeria que era só esperar.
+    wrap.innerHTML += '<div class="banner pending" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⏳</span><span>Falta informar e validar seu CNPJ para liberar seu cadastro financeiro.</span><span class="arrow">›</span></div>';
   } else if(!state.cnpj.approved && state.cnpj.attempts>0){
     wrap.innerHTML += '<div class="banner error" onclick="goto(\'account\');switchTab(\'financeiro\')"><span>⚠️</span><span><b>CNPJ não aprovado.</b> Corrija seus dados e tente novamente.</span><span class="arrow">›</span></div>';
   } else if(state.cnpj.approved && state.bank.locked){
