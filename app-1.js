@@ -483,11 +483,13 @@ function toggleWindowLock(){
   renderFinanceiroLock();
 }
 
-// Painel de teste: simula a passagem do dia 25 — data em que o CNPJ novo E o dado bancário novo
-// passam a valer, juntos (ver nota de produto na seção de Dados Bancários). Antes de 28/09 o dado
-// bancário tinha data própria, dia 11; deixou de ter quando se confirmou que ele fica vinculado ao
-// CNPJ no Protheus. Como o protótipo não roda com data real, isso aqui é manual.
-// Limpa os 2 banners de transição de uma vez.
+// Painel de teste: simula a QUEDA DO ÚLTIMO PAGAMENTO nos dados antigos (previsto pro dia 10), que
+// é quando os banners de transição finalmente saem da tela. Repare que não é o dia 25: no dia 25 o
+// CNPJ e a conta novos já passam a valer para os atendimentos novos, mas ainda existe um pagamento
+// a caminho nos dados antigos — e é justamente nessa janela que o profissional pode encerrar o CNPJ
+// velho achando que já migrou tudo, o que trava a nota e o pagamento. Por isso o aviso sobrevive
+// ao dia 25. Os textos dos banners dizem as duas coisas de uma vez, então não mudam no meio.
+// Como o protótipo não roda com data real, isso aqui é manual. Limpa os 2 banners de uma vez.
 function toggleCycleTurnover(){
   const done = el('cycle-turnover-check').checked;
   if(done){
@@ -505,8 +507,9 @@ function renderCnpjTransitionBanner(){
   if(!state.cnpj.pendingOfficial){ box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
   box.innerHTML = '<b style="display:block;margin-bottom:6px;">⚠️ CNPJ em transição</b>'
-    + 'CNPJ ativo para pagamento agora: <b>'+(state.cnpj.officialValue || '—')+'</b><br>'
-    + 'Novo CNPJ validado: <b>'+(state.cnpj.pendingValue || '—')+'</b> — só passa a valer para pagamento a partir do <b>dia 25 deste mês</b>. Mantenha o CNPJ antigo ativo até essa data.';
+    + 'Atendimentos até o <b>dia 24</b>: faturados no CNPJ <b>'+(state.cnpj.officialValue || '—')+'</b>. O pagamento cai até o <b>dia 10</b> do mês seguinte.<br>'
+    + 'Atendimentos a partir do <b>dia 25</b>: faturados no CNPJ <b>'+(state.cnpj.pendingValue || '—')+'</b>.<br>'
+    + '<b>Não encerre o CNPJ anterior antes de receber esse último pagamento.</b> A nota fiscal desses atendimentos precisa ser emitida nele, e um CNPJ baixado não emite nota.';
 }
 
 // Banner PERSISTENTE só sobre dado bancário (nunca menciona CNPJ) — mesma decisão de 24/09.
@@ -515,9 +518,9 @@ function renderBankTransitionBanner(){
   if(!state.bank.pendingOfficial){ box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
   box.innerHTML = '<b style="display:block;margin-bottom:6px;">⚠️ Dados bancários em transição</b>'
-    + 'Dados bancários ativos para pagamento agora: <b>'+(state.bank.officialSummary || '—')+'</b><br>'
-    + 'Novos dados validados: <b>'+(state.bank.pendingSummary || '—')+'</b><br>'
-    + 'Passam a valer a partir do <b>dia 25 deste mês</b>, junto com o novo CNPJ. Até lá, o pagamento continua sendo feito na conta anterior.';
+    + 'Atendimentos até o <b>dia 24</b> são pagos na conta anterior: <b>'+(state.bank.officialSummary || '—')+'</b> — cai até o <b>dia 10</b> do mês seguinte.<br>'
+    + 'Atendimentos a partir do <b>dia 25</b> são pagos na conta nova: <b>'+(state.bank.pendingSummary || '—')+'</b><br>'
+    + '<b>Não feche a conta anterior antes de receber esse último pagamento.</b>';
 }
 function applyWindowLockToBank(){
   if(state.window.blocked){
