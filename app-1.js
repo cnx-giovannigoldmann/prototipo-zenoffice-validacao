@@ -483,13 +483,17 @@ function toggleWindowLock(){
   renderFinanceiroLock();
 }
 
-// Painel de teste: simula a QUEDA DO ÚLTIMO PAGAMENTO nos dados antigos (previsto pro dia 10), que
-// é quando os banners de transição finalmente saem da tela. Repare que não é o dia 25: no dia 25 o
-// CNPJ e a conta novos já passam a valer para os atendimentos novos, mas ainda existe um pagamento
-// a caminho nos dados antigos — e é justamente nessa janela que o profissional pode encerrar o CNPJ
-// velho achando que já migrou tudo, o que trava a nota e o pagamento. Por isso o aviso sobrevive
-// ao dia 25. Os textos dos banners dizem as duas coisas de uma vez, então não mudam no meio.
-// Como o protótipo não roda com data real, isso aqui é manual. Limpa os 2 banners de uma vez.
+// Painel de teste: simula a chegada do DIA 10 do mês seguinte à troca — a data em que, por decisão
+// do Giovanni (28/09), os dois banners de transição saem da tela.
+// Repare que NÃO é o dia 25: nele o CNPJ e a conta novos já valem para os atendimentos novos, mas
+// ainda existe um pagamento a caminho nos dados antigos. É justamente nessa janela que o profissional
+// pode dar baixa no CNPJ velho achando que já migrou tudo, o que trava a nota fiscal e o pagamento.
+// Por isso o aviso sobrevive ao dia 25. Os textos dizem as duas coisas de uma vez, então não mudam
+// no meio do caminho — some tudo junto, de uma vez.
+// O ideal seria sumir quando o pagamento fosse confirmado como pago, mas esse status não é acessível
+// do lado do ZenOffice e um gatilho manual ficaria esquecido na tela. Risco aceito: num pagamento
+// atrasado o aviso some antes do dinheiro cair — por isso os textos dizem "previsto para o dia 10".
+// Como o protótipo não roda com data real, aqui isso é um checkbox.
 function toggleCycleTurnover(){
   const done = el('cycle-turnover-check').checked;
   if(done){
@@ -507,7 +511,7 @@ function renderCnpjTransitionBanner(){
   if(!state.cnpj.pendingOfficial){ box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
   box.innerHTML = '<b style="display:block;margin-bottom:6px;">⚠️ CNPJ em transição</b>'
-    + 'Atendimentos até o <b>dia 24</b>: faturados no CNPJ <b>'+(state.cnpj.officialValue || '—')+'</b>. O pagamento cai até o <b>dia 10</b> do mês seguinte.<br>'
+    + 'Atendimentos até o <b>dia 24</b>: faturados no CNPJ <b>'+(state.cnpj.officialValue || '—')+'</b>. O pagamento está previsto para o <b>dia 10</b> do mês seguinte.<br>'
     + 'Atendimentos a partir do <b>dia 25</b>: faturados no CNPJ <b>'+(state.cnpj.pendingValue || '—')+'</b>.<br>'
     + '<b>Não encerre o CNPJ anterior antes de receber esse último pagamento.</b> A nota fiscal desses atendimentos precisa ser emitida nele, e um CNPJ baixado não emite nota.';
 }
@@ -518,7 +522,7 @@ function renderBankTransitionBanner(){
   if(!state.bank.pendingOfficial){ box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
   box.innerHTML = '<b style="display:block;margin-bottom:6px;">⚠️ Dados bancários em transição</b>'
-    + 'Atendimentos até o <b>dia 24</b> são pagos na conta anterior: <b>'+(state.bank.officialSummary || '—')+'</b> — cai até o <b>dia 10</b> do mês seguinte.<br>'
+    + 'Atendimentos até o <b>dia 24</b> são pagos na conta anterior: <b>'+(state.bank.officialSummary || '—')+'</b> — previsto para o <b>dia 10</b> do mês seguinte.<br>'
     + 'Atendimentos a partir do <b>dia 25</b> são pagos na conta nova: <b>'+(state.bank.pendingSummary || '—')+'</b><br>'
     + '<b>Não feche a conta anterior antes de receber esse último pagamento.</b>';
 }
